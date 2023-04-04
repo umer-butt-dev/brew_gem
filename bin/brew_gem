@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+require 'http'
+require 'json'
+
+puts 'Please provide your openai API key'
+api_key = gets.chomp
+return 'invalid api key' unless api_key
+# debugger
+
+url = 'https://api.openai.com/v1/engines/text-davinci-002/completions'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Authorization' => "Bearer #{api_key.to_s}"
+}
+loop do
+  puts 'Ask AI'
+  query = gets.chomp
+  return if query.eql?('exit')
+  payload = {
+    prompt: query,
+    max_tokens: 100,
+    temperature: 0.7
+  }
+  response = HTTP.headers(headers).post(url, json: payload)
+  puts JSON.parse(response.body)['choices'][0]['text']
+end
